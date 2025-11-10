@@ -118,7 +118,6 @@ class alumnograduacion extends EntidadAbstracta {
 
         this.dom.colocarvalidaciones('form_iu', 'EDIT');
 
-        this.dom.assign_property_value('dni_alumno', 'readonly', 'true');
         this.dom.assign_property_value('memoria_pdf', 'readonly', 'true');
         document.getElementById('label_nuevo_memoria_pdf').style.display = 'block';
         document.getElementById('nuevo_memoria_pdf').style.display = 'block';
@@ -190,14 +189,6 @@ class alumnograduacion extends EntidadAbstracta {
     }
 
     ADD_dni_alumno_validation() {
-        if (!this.validations.min_size('dni_alumno', 9)) {
-            this.dom.mostrar_error_campo('dni_alumno', 'dni_alumno_min_size_KO');
-            return 'dni_alumno_min_size_KO';
-        }
-        if (!this.validations.max_size('dni_alumno', 9)) {
-            this.dom.mostrar_error_campo('dni_alumno', 'dni_alumno_max_size_KO');
-            return 'dni_alumno_max_size_KO';
-        }
         if (!this.validations.format('dni_alumno', '^[0-9]{8}[A-Z]$')) {
             this.dom.mostrar_error_campo('dni_alumno', 'dni_alumno_format_KO');
             return 'dni_alumno_format_KO';
@@ -265,7 +256,7 @@ class alumnograduacion extends EntidadAbstracta {
 
     ADD_nota_final_validation() {
         const valor = document.getElementById('nota_final').value;
-        if (!this.validations.format('nota_final', '^(10(\.0{1,2})?|[0-9](\.[0-9]{1,2})?)$')) {
+        if (!this.validations.format('nota_final', '^[0-9]+([.,][0-9]{1,2})?$')) {
             this.dom.mostrar_error_campo('nota_final', 'nota_final_format_KO');
             return 'nota_final_format_KO';
         }
@@ -455,7 +446,7 @@ class alumnograduacion extends EntidadAbstracta {
             this.dom.mostrar_exito_campo('nota_final');
             return true;
         }
-        if (!this.validations.format('nota_final', '^(10(\.\d{0,2})?|[0-9](\.[0-9]{0,2})?)$')) {
+        if (!this.validations.format('nota_final', '^[0-9]+([.,][0-9]{0,2})?$')) {
             this.dom.mostrar_error_campo('nota_final', 'nota_final_format_KO');
             return 'nota_final_format_KO';
         }

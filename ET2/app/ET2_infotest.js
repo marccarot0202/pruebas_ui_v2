@@ -36,9 +36,9 @@ let alumnograduacion_tests_fields = Array(
 );
 
 let alumnograduacion_tests_files = Array(
-    ['alumnograduacion','nuevo_memoria_pdf',15,1,'ADD',[], 'nuevo_memoria_pdf_not_exist_file_KO'],
-    ['alumnograduacion','nuevo_memoria_pdf',16,2,'ADD',[{format_name_file:'memoria.pdf'},{type_file:'application/pdf'},{max_size_file:4096}],true],
-    ['alumnograduacion','nuevo_memoria_pdf',17,3,'EDIT',[],true]
+    ['alumnograduacion','nuevo_memoria_pdf',15,1,'ADD','Fichero obligatorio',[], 'nuevo_memoria_pdf_not_exist_file_KO'],
+    ['alumnograduacion','nuevo_memoria_pdf',16,2,'ADD','Fichero válido',[{format_name_file:'memoria.pdf'},{type_file:'application/pdf'},{max_size_file:4096}],true],
+    ['alumnograduacion','nuevo_memoria_pdf',17,3,'EDIT','Fichero opcional',[],true]
 );
 
 let articulo_def_tests = Array(
@@ -79,9 +79,9 @@ let articulo_tests_fields = Array(
 );
 
 let articulo_tests_files = Array(
-    ['articulo','nuevo_FicheropdfA',15,1,'ADD',[], 'nuevo_FicheropdfA_not_exist_file_KO'],
-    ['articulo','nuevo_FicheropdfA',16,2,'ADD',[{format_name_file:'articulo.pdf'},{type_file:'application/pdf'},{max_size_file:10240}],true],
-    ['articulo','nuevo_FicheropdfA',17,3,'EDIT',[],true]
+    ['articulo','nuevo_FicheropdfA',15,1,'ADD','PDF obligatorio',[], 'nuevo_FicheropdfA_not_exist_file_KO'],
+    ['articulo','nuevo_FicheropdfA',16,2,'ADD','PDF válido',[{format_name_file:'articulo.pdf'},{type_file:'application/pdf'},{max_size_file:10240}],true],
+    ['articulo','nuevo_FicheropdfA',17,3,'EDIT','PDF opcional',[],true]
 );
 
 let ubicacion_def_tests = Array(
@@ -120,10 +120,10 @@ let ubicacion_tests_fields = Array(
 );
 
 let ubicacion_tests_files = Array(
-    ['ubicacion','nuevo_site_north_photo',13,1,'ADD',[], 'nuevo_site_north_photo_not_exist_file_KO'],
-    ['ubicacion','nuevo_site_north_photo',17,2,'EDIT',[],true],
-    ['ubicacion','nuevo_site_south_photo',14,3,'ADD',[], 'nuevo_site_south_photo_not_exist_file_KO'],
-    ['ubicacion','nuevo_site_east_photo',15,4,'ADD',[], 'nuevo_site_east_photo_not_exist_file_KO'],
-    ['ubicacion','nuevo_site_west_photo',16,5,'ADD',[], 'nuevo_site_west_photo_not_exist_file_KO'],
-    ['ubicacion','nuevo_site_north_photo',13,6,'ADD',[{format_name_file:'foto.jpg'},{type_file:'image/jpeg'},{max_size_file:2048}],true]
+    ['ubicacion','nuevo_site_north_photo',13,1,'ADD','Foto norte obligatoria',[], 'nuevo_site_north_photo_not_exist_file_KO'],
+    ['ubicacion','nuevo_site_north_photo',17,2,'EDIT','Foto norte opcional',[],true],
+    ['ubicacion','nuevo_site_south_photo',14,3,'ADD','Foto sur obligatoria',[], 'nuevo_site_south_photo_not_exist_file_KO'],
+    ['ubicacion','nuevo_site_east_photo',15,4,'ADD','Foto este obligatoria',[], 'nuevo_site_east_photo_not_exist_file_KO'],
+    ['ubicacion','nuevo_site_west_photo',16,5,'ADD','Foto oeste obligatoria',[], 'nuevo_site_west_photo_not_exist_file_KO'],
+    ['ubicacion','nuevo_site_north_photo',13,6,'ADD','Foto norte correcta',[{format_name_file:'foto.jpg'},{type_file:'image/jpeg'},{max_size_file:2048}],true]
 );

@@ -215,40 +215,41 @@ class EntidadAbstracta{
 	 */
 	crearTablaDatos(datos, mostrarespeciales){
 		
-		var misdatos = datos;
-		
-		// proceso los datos de la tabla para incluir en cada fila los tres botones conectados a createForm_ACCION()
-		for (var i=0;i<misdatos.length;i++){
-			
-			var linedit = `<img id='botonEDIT' src='./iconos/EDIT.png' onclick='entidad.createForm_EDIT(`+JSON.stringify(misdatos[i])+`);'>`;
-			var lindelete = `<img id='botonDELETE' src='./iconos/DELETE.png' onclick='entidad.createForm_DELETE(`+JSON.stringify(misdatos[i])+`);'>`;
-			var linshowcurrent = `<img id='botonSHOWCURRENT' src='./iconos/SHOWCURRENT.png' onclick='entidad.createForm_SHOWCURRENT(`+JSON.stringify(misdatos[i])+`);'>`;
-			misdatos[i]['EDIT'] = linedit;
-			misdatos[i]['DELETE'] = lindelete;
-			misdatos[i]['SHOWCURRENT'] = linshowcurrent;
+                const filasTabla = datos.map((fila) => ({...fila}));
 
-		}
+                /*
+                recorrer todas las filas de datos y cada atributo para si tiene una funcion de transformación de valor modificarlo en el momento
+                */
 
-		/*
-		recorrer todas las filas de datos y cada atributo para si tiene una funcion de transformación de valor modificarlo en el momento
-		*/
-		
-		if (mostrarespeciales.length > 0){
-		
-			for (var i=0;i<misdatos.length;i++){
-				for (var clave in misdatos[i]){
-					for (var posicion in mostrarespeciales){
-						if (clave == mostrarespeciales[posicion]){
-							misdatos[i][clave] = this.mostrarcambioatributo(clave, misdatos[i][clave]);
-						}
-					}
-				}
-			}
-		}
-		//muestro datos en tabla
-		this.dom.showData('IU_manage_table', misdatos);
-		this.mostrarocultarcolumnas();
-		this.dom.crearSeleccionablecolumnas(this.columnasamostrar, this.atributos);
+                if (mostrarespeciales.length > 0){
+
+                        for (var i=0;i<filasTabla.length;i++){
+                                for (var clave in filasTabla[i]){
+                                        for (var posicion in mostrarespeciales){
+                                                if (clave == mostrarespeciales[posicion]){
+                                                        filasTabla[i][clave] = this.mostrarcambioatributo(clave, filasTabla[i][clave]);
+                                                }
+                                        }
+                                }
+                        }
+                }
+
+                // proceso los datos de la tabla para incluir en cada fila los tres botones conectados a createForm_ACCION()
+                for (var i=0;i<filasTabla.length;i++){
+
+                        var linedit = `<img id='botonEDIT' src='./iconos/EDIT.png' onclick='entidad.createForm_EDIT(`+JSON.stringify(datos[i])+`);'>`;
+                        var lindelete = `<img id='botonDELETE' src='./iconos/DELETE.png' onclick='entidad.createForm_DELETE(`+JSON.stringify(datos[i])+`);'>`;
+                        var linshowcurrent = `<img id='botonSHOWCURRENT' src='./iconos/SHOWCURRENT.png' onclick='entidad.createForm_SHOWCURRENT(`+JSON.stringify(datos[i])+`);'>`;
+                        filasTabla[i]['EDIT'] = linedit;
+                        filasTabla[i]['DELETE'] = lindelete;
+                        filasTabla[i]['SHOWCURRENT'] = linshowcurrent;
+
+                }
+
+                //muestro datos en tabla
+                this.dom.showData('IU_manage_table', filasTabla);
+                this.mostrarocultarcolumnas();
+                this.dom.crearSeleccionablecolumnas(this.columnasamostrar, this.atributos);
 		
 
 	}
