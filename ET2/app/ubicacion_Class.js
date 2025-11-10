@@ -24,34 +24,6 @@ class ubicacion extends EntidadAbstracta {
         ];
     }
 
-    crearTablaDatos(datos, mostrarespeciales) {
-        const filasOriginales = datos.map((fila) => ({ ...fila }));
-        const filasTabla = datos.map((fila) => ({ ...fila }));
-
-        if (mostrarespeciales.length > 0) {
-            for (let i = 0; i < filasTabla.length; i++) {
-                for (const clave in filasTabla[i]) {
-                    if (mostrarespeciales.includes(clave)) {
-                        filasTabla[i][clave] = this.mostrarcambioatributo(clave, filasTabla[i][clave]);
-                    }
-                }
-            }
-        }
-
-        for (let i = 0; i < filasTabla.length; i++) {
-            const originalFila = filasOriginales[i];
-            const datosSerializados = encodeURIComponent(JSON.stringify(originalFila));
-            const llamada = `JSON.parse(decodeURIComponent(\"${datosSerializados}\"))`;
-            filasTabla[i].EDIT = `<img id='botonEDIT' src='./iconos/EDIT.png' onclick='entidad.createForm_EDIT(${llamada});'>`;
-            filasTabla[i].DELETE = `<img id='botonDELETE' src='./iconos/DELETE.png' onclick='entidad.createForm_DELETE(${llamada});'>`;
-            filasTabla[i].SHOWCURRENT = `<img id='botonSHOWCURRENT' src='./iconos/SHOWCURRENT.png' onclick='entidad.createForm_SHOWCURRENT(${llamada});'>`;
-        }
-
-        this.dom.showData('IU_manage_table', filasTabla);
-        this.mostrarocultarcolumnas();
-        this.dom.crearSeleccionablecolumnas(this.columnasamostrar, this.atributos);
-    }
-
     manual_form_creation() {
         return `
             <form id='form_iu' action="" method="POST" enctype="multipart/form-data" onsubmit="" class='formulario'>
