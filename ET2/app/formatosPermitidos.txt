@@ -1,0 +1,31 @@
+alumnograduacion.dni_alumno: 8 dígitos seguidos de una letra mayúscula con control español.
+alumnograduacion.cod_titulacion: entre 3 y 10 caracteres en mayúsculas y números.
+alumnograduacion.nombre_trabajo: texto entre 5 y 100 caracteres con letras, números, espacios y signos básicos.
+alumnograduacion.anio_academico: patrón AAAA-AAAA con el segundo año igual al primero más uno.
+alumnograduacion.nota_final: número decimal entre 0 y 10 con hasta dos decimales.
+alumnograduacion.tutor_principal: entre 4 y 60 caracteres alfabéticos o espacios.
+alumnograduacion.fecha_defensa: fecha válida en formato dd/mm/aaaa.
+alumnograduacion.memoria_pdf: nombre de fichero con letras, números, guiones y puntos.
+
+articulo.CodigoA: entre 1 y 11 dígitos.
+articulo.AutoresA: texto entre 1 y 200 caracteres con letras, espacios, comas y puntos.
+articulo.TituloA: texto entre 1 y 100 caracteres con letras, números, espacios y signos básicos.
+articulo.TituloR: texto entre 1 y 100 caracteres con letras, números, espacios y signos básicos.
+articulo.ISSN: formato 0000-000X.
+articulo.VolumenR: número entre 1 y 4 dígitos.
+articulo.PagIniA: número entre 1 y 4 dígitos.
+articulo.PagFinA: número entre 1 y 4 dígitos mayor o igual que PagIniA.
+articulo.FechaPublicacionR: fecha válida dd/mm/aaaa.
+articulo.FicheropdfA: nombre de fichero PDF con letras, números, guiones y puntos.
+articulo.EstadoA: uno de los valores Enviado, Revision o Publicado.
+
+ubicacion.id_site: número entero positivo.
+ubicacion.site_latitud: número decimal entre -90 y 90 con hasta 6 decimales.
+ubicacion.site_longitud: número decimal entre -180 y 180 con hasta 6 decimales.
+ubicacion.site_altitude: número entero entre -500 y 9000.
+ubicacion.site_locality: texto entre 3 y 40 caracteres con letras, espacios o guiones.
+ubicacion.site_provider_login: texto entre 3 y 30 caracteres con letras, números, guiones o guiones bajos.
+ubicacion.site_north_photo: nombre de fichero de imagen (jpg/png) con letras, números, guiones y puntos.
+ubicacion.site_south_photo: nombre de fichero de imagen (jpg/png) con letras, números, guiones y puntos.
+ubicacion.site_east_photo: nombre de fichero de imagen (jpg/png) con letras, números, guiones y puntos.
+ubicacion.site_west_photo: nombre de fichero de imagen (jpg/png) con letras, números, guiones y puntos.
