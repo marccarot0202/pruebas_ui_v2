@@ -20,6 +20,130 @@ class articulo extends EntidadAbstracta {
             'nuevo_FicheropdfA',
             'EstadoA'
         ];
+
+        this.camposFormulario = [
+            'CodigoA',
+            'AutoresA',
+            'TituloA',
+            'TituloR',
+            'ISSN',
+            'VolumenR',
+            'PagIniA',
+            'PagFinA',
+            'FechaPublicacionR',
+            'FicheropdfA',
+            'EstadoA'
+        ];
+    }
+
+    obtenerValorCampo(fila, campo) {
+        if (!fila) {
+            return '';
+        }
+
+        if (Object.prototype.hasOwnProperty.call(fila, campo)) {
+            return fila[campo];
+        }
+
+        const coincidencia = Object.keys(fila).find(
+            (clave) => clave.toLowerCase() === campo.toLowerCase()
+        );
+
+        if (coincidencia) {
+            return fila[coincidencia];
+        }
+
+        return '';
+    }
+
+    normalizarFilaParaFormulario(fila) {
+        const valores = {};
+
+        this.camposFormulario.forEach((campo) => {
+            valores[campo] = this.obtenerValorCampo(fila, campo);
+        });
+
+        if (valores.FechaPublicacionR) {
+            valores.FechaPublicacionR = this.formatearFechaParaUsuario(valores.FechaPublicacionR);
+        }
+
+        return valores;
+    }
+
+    rellenarFormularioConFila(fila) {
+        const valores = this.normalizarFilaParaFormulario(fila);
+
+        Object.entries(valores).forEach(([campo, valor]) => {
+            const elemento = document.getElementById(campo);
+
+            if (elemento) {
+                elemento.value = valor ?? '';
+            }
+        });
+    }
+
+    formatearFechaParaUsuario(valorEntrada) {
+        if (!valorEntrada || typeof valorEntrada !== 'string') {
+            return valorEntrada;
+        }
+
+        if (valorEntrada.includes('-')) {
+            return this.mostrarcambioatributo('FechaPublicacionR', valorEntrada);
+        }
+
+        return valorEntrada;
+    }
+
+    configurarEnlaceFichero(nombreFichero) {
+        const enlace = document.getElementById('link_FicheropdfA');
+
+        if (!enlace) {
+            return;
+        }
+
+        if (nombreFichero) {
+            this.dom.assign_property_value(
+                'link_FicheropdfA',
+                'href',
+                'http://193.147.87.202/ET2/filesuploaded/files_FicheropdfA/' + nombreFichero
+            );
+            enlace.style.display = 'inline';
+        } else {
+            this.dom.assign_property_value('link_FicheropdfA', 'href', '');
+            this.dom.hide_element('link_FicheropdfA');
+        }
+    }
+
+    prepararDatosParaBack() {
+        const fechaInput = document.getElementById('FechaPublicacionR');
+
+        const valoresOriginales = {
+            FechaPublicacionR: fechaInput ? fechaInput.value : ''
+        };
+
+        if (fechaInput && this.esFechaUsuario(fechaInput.value)) {
+            fechaInput.value = this.formatearFechaParaBack(fechaInput.value);
+        }
+
+        return () => {
+            const fechaRestaurar = document.getElementById('FechaPublicacionR');
+            if (fechaRestaurar) {
+                fechaRestaurar.value = valoresOriginales.FechaPublicacionR;
+            }
+        };
+    }
+
+    esFechaUsuario(valor) {
+        return /^([0-9]{2})\/([0-9]{2})\/([0-9]{4})$/.test(valor);
+    }
+
+    formatearFechaParaBack(valor) {
+        if (!this.esFechaUsuario(valor)) {
+            return valor;
+        }
+
+        const [dia, mes, anyo] = valor.split('/');
+        return `${anyo}-${mes}-${dia}`;
     }
 
     crearTablaDatos(datos, mostrarespeciales) {
@@ -156,13 +280,8 @@ class articulo extends EntidadAbstracta {
         this.dom.assign_property_value('form_iu', 'onsubmit', 'return entidad.EDIT_submit_' + this.nombreentidad + '()');
         this.dom.assign_property_value('form_iu', 'action', 'javascript:entidad.EDIT();');
 
-        if (fila.FicheropdfA) {
-            this.dom.assign_property_value('link_FicheropdfA', 'href', 'http://193.147.87.202/ET2/filesuploaded/files_FicheropdfA/' + fila.FicheropdfA);
-        }
-
-        fila.FechaPublicacionR = this.mostrarcambioatributo('FechaPublicacionR', fila.FechaPublicacionR);
-
-        this.dom.rellenarvaloresform(fila);
+        this.rellenarFormularioConFila(fila);
+        this.configurarEnlaceFichero(this.obtenerValorCampo(fila, 'FicheropdfA'));
 
         this.dom.colocarvalidaciones('form_iu', 'EDIT');
 
@@ -182,13 +301,8 @@ class articulo extends EntidadAbstracta {
 
         this.dom.assign_property_value('form_iu', 'action', 'javascript:entidad.DELETE();');
 
-        if (fila.FicheropdfA) {
-            this.dom.assign_property_value('link_FicheropdfA', 'href', 'http://193.147.87.202/ET2/filesuploaded/files_FicheropdfA/' + fila.FicheropdfA);
-        }
-
-        fila.FechaPublicacionR = this.mostrarcambioatributo('FechaPublicacionR', fila.FechaPublicacionR);
-
-        this.dom.rellenarvaloresform(fila);
+        this.rellenarFormularioConFila(fila);
+        this.configurarEnlaceFichero(this.obtenerValorCampo(fila, 'FicheropdfA'));
 
         this.dom.colocartodosreadonly('form_iu');
         this.dom.hide_element_form('nuevo_FicheropdfA');
@@ -204,13 +318,8 @@ class articulo extends EntidadAbstracta {
         this.dom.remove_class_value('class_contenido_titulo_form', 'text_contenido_titulo_form');
         this.dom.assign_class_value('class_contenido_titulo_form', 'text_contenido_titulo_form_articulo_SHOWCURRENT');
 
-        if (fila.FicheropdfA) {
-            this.dom.assign_property_value('link_FicheropdfA', 'href', 'http://193.147.87.202/ET2/filesuploaded/files_FicheropdfA/' + fila.FicheropdfA);
-        }
-
-        fila.FechaPublicacionR = this.mostrarcambioatributo('FechaPublicacionR', fila.FechaPublicacionR);
-
-        this.dom.rellenarvaloresform(fila);
+        this.rellenarFormularioConFila(fila);
+        this.configurarEnlaceFichero(this.obtenerValorCampo(fila, 'FicheropdfA'));
 
         this.dom.colocartodosreadonly('form_iu');
         this.dom.hide_element_form('nuevo_FicheropdfA');
@@ -233,6 +342,24 @@ class articulo extends EntidadAbstracta {
         this.dom.colocarvalidaciones('form_iu', 'SEARCH');
         this.dom.colocarboton('SEARCH');
         setLang();
+    }
+
+    async ADD() {
+        const restaurar = this.prepararDatosParaBack();
+        await super.ADD();
+        restaurar();
+    }
+
+    async EDIT() {
+        const restaurar = this.prepararDatosParaBack();
+        await super.EDIT();
+        restaurar();
+    }
+
+    async SEARCH() {
+        const restaurar = this.prepararDatosParaBack();
+        await super.SEARCH();
+        restaurar();
     }
 
     ADD_CodigoA_validation() {

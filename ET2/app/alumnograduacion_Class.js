@@ -17,6 +17,138 @@ class alumnograduacion extends EntidadAbstracta {
             'memoria_pdf',
             'nuevo_memoria_pdf'
         ];
+
+        this.camposFormulario = [
+            'dni_alumno',
+            'cod_titulacion',
+            'nombre_trabajo',
+            'anio_academico',
+            'nota_final',
+            'tutor_principal',
+            'fecha_defensa',
+            'memoria_pdf'
+        ];
+    }
+
+    obtenerValorCampo(fila, campo) {
+        if (!fila) {
+            return '';
+        }
+
+        if (Object.prototype.hasOwnProperty.call(fila, campo)) {
+            return fila[campo];
+        }
+
+        const coincidencia = Object.keys(fila).find(
+            (clave) => clave.toLowerCase() === campo.toLowerCase()
+        );
+
+        if (coincidencia) {
+            return fila[coincidencia];
+        }
+
+        return '';
+    }
+
+    normalizarFilaParaFormulario(fila) {
+        const valores = {};
+
+        this.camposFormulario.forEach((campo) => {
+            valores[campo] = this.obtenerValorCampo(fila, campo);
+        });
+
+        if (valores.fecha_defensa) {
+            valores.fecha_defensa = this.formatearFechaParaUsuario(valores.fecha_defensa);
+        }
+
+        return valores;
+    }
+
+    rellenarFormularioConFila(fila) {
+        const valores = this.normalizarFilaParaFormulario(fila);
+
+        Object.entries(valores).forEach(([campo, valor]) => {
+            const elemento = document.getElementById(campo);
+
+            if (elemento) {
+                elemento.value = valor ?? '';
+            }
+        });
+    }
+
+    formatearFechaParaUsuario(valorEntrada) {
+        if (!valorEntrada || typeof valorEntrada !== 'string') {
+            return valorEntrada;
+        }
+
+        if (valorEntrada.includes('-')) {
+            return this.mostrarcambioatributo('fecha_defensa', valorEntrada);
+        }
+
+        return valorEntrada;
+    }
+
+    configurarEnlaceMemoria(nombreFichero) {
+        const enlace = document.getElementById('link_memoria_pdf');
+
+        if (!enlace) {
+            return;
+        }
+
+        if (nombreFichero) {
+            this.dom.assign_property_value(
+                'link_memoria_pdf',
+                'href',
+                'http://193.147.87.202/ET2/filesuploaded/files_memoria_pdf/' + nombreFichero
+            );
+            enlace.style.display = 'inline';
+        } else {
+            this.dom.assign_property_value('link_memoria_pdf', 'href', '');
+            this.dom.hide_element('link_memoria_pdf');
+        }
+    }
+
+    prepararDatosParaBack(convertirNota = true) {
+        const fechaInput = document.getElementById('fecha_defensa');
+        const notaInput = document.getElementById('nota_final');
+
+        const valoresOriginales = {
+            fecha_defensa: fechaInput ? fechaInput.value : '',
+            nota_final: notaInput ? notaInput.value : ''
+        };
+
+        if (fechaInput && this.esFechaUsuario(fechaInput.value)) {
+            fechaInput.value = this.formatearFechaParaBack(fechaInput.value);
+        }
+
+        if (convertirNota && notaInput && notaInput.value) {
+            notaInput.value = notaInput.value.replace(',', '.');
+        }
+
+        return () => {
+            const fechaRestaurar = document.getElementById('fecha_defensa');
+            if (fechaRestaurar) {
+                fechaRestaurar.value = valoresOriginales.fecha_defensa;
+            }
+
+            const notaRestaurar = document.getElementById('nota_final');
+            if (notaRestaurar) {
+                notaRestaurar.value = valoresOriginales.nota_final;
+            }
+        };
+    }
+
+    esFechaUsuario(valor) {
+        return /^([0-9]{2})\/([0-9]{2})\/([0-9]{4})$/.test(valor);
+    }
+
+    formatearFechaParaBack(valor) {
+        if (!this.esFechaUsuario(valor)) {
+            return valor;
+        }
+
+        const [dia, mes, anyo] = valor.split('/');
+        return `${anyo}-${mes}-${dia}`;
     }
 
     crearTablaDatos(datos, mostrarespeciales) {
@@ -136,13 +268,8 @@ class alumnograduacion extends EntidadAbstracta {
         this.dom.assign_property_value('form_iu', 'onsubmit', 'return entidad.EDIT_submit_' + this.nombreentidad + '()');
         this.dom.assign_property_value('form_iu', 'action', 'javascript:entidad.EDIT();');
 
-        if (fila.memoria_pdf !== '' && fila.memoria_pdf !== null) {
-            this.dom.assign_property_value('link_memoria_pdf', 'href', 'http://193.147.87.202/ET2/filesuploaded/files_memoria_pdf/' + fila.memoria_pdf);
-        }
-
-        fila.fecha_defensa = this.mostrarcambioatributo('fecha_defensa', fila.fecha_defensa);
-
-        this.dom.rellenarvaloresform(fila);
+        this.rellenarFormularioConFila(fila);
+        this.configurarEnlaceMemoria(this.obtenerValorCampo(fila, 'memoria_pdf'));
 
         this.dom.colocarvalidaciones('form_iu', 'EDIT');
 
@@ -162,13 +289,8 @@ class alumnograduacion extends EntidadAbstracta {
 
         this.dom.assign_property_value('form_iu', 'action', 'javascript:entidad.DELETE();');
 
-        if (fila.memoria_pdf !== '' && fila.memoria_pdf !== null) {
-            this.dom.assign_property_value('link_memoria_pdf', 'href', 'http://193.147.87.202/ET2/filesuploaded/files_memoria_pdf/' + fila.memoria_pdf);
-        }
-
-        fila.fecha_defensa = this.mostrarcambioatributo('fecha_defensa', fila.fecha_defensa);
-
-        this.dom.rellenarvaloresform(fila);
+        this.rellenarFormularioConFila(fila);
+        this.configurarEnlaceMemoria(this.obtenerValorCampo(fila, 'memoria_pdf'));
 
         this.dom.colocartodosreadonly('form_iu');
         this.dom.hide_element_form('nuevo_memoria_pdf');
@@ -184,13 +306,8 @@ class alumnograduacion extends EntidadAbstracta {
         this.dom.remove_class_value('class_contenido_titulo_form', 'text_contenido_titulo_form');
         this.dom.assign_class_value('class_contenido_titulo_form', 'text_contenido_titulo_form_alumnograduacion_SHOWCURRENT');
 
-        if (fila.memoria_pdf !== '' && fila.memoria_pdf !== null) {
-            this.dom.assign_property_value('link_memoria_pdf', 'href', 'http://193.147.87.202/ET2/filesuploaded/files_memoria_pdf/' + fila.memoria_pdf);
-        }
-
-        fila.fecha_defensa = this.mostrarcambioatributo('fecha_defensa', fila.fecha_defensa);
-
-        this.dom.rellenarvaloresform(fila);
+        this.rellenarFormularioConFila(fila);
+        this.configurarEnlaceMemoria(this.obtenerValorCampo(fila, 'memoria_pdf'));
 
         this.dom.colocartodosreadonly('form_iu');
         this.dom.hide_element_form('nuevo_memoria_pdf');
@@ -214,6 +331,24 @@ class alumnograduacion extends EntidadAbstracta {
         this.dom.colocarvalidaciones('form_iu', 'SEARCH');
         this.dom.colocarboton('SEARCH');
         setLang();
+    }
+
+    async ADD() {
+        const restaurar = this.prepararDatosParaBack();
+        await super.ADD();
+        restaurar();
+    }
+
+    async EDIT() {
+        const restaurar = this.prepararDatosParaBack();
+        await super.EDIT();
+        restaurar();
+    }
+
+    async SEARCH() {
+        const restaurar = this.prepararDatosParaBack();
+        await super.SEARCH();
+        restaurar();
     }
 
     ADD_dni_alumno_validation() {
